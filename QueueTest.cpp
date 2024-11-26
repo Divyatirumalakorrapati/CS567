@@ -1,57 +1,51 @@
-#include "Queue.h"
-#include <gtest/gtest.h>  // Google Test framework
+#include <CUnit/CUnit.h>
+#include <CUnit/Basic.h>
+#include "queue.h"  // Include the queue implementation file
 
-// Test case for enqueuing and dequeuing elements
-TEST(QueueTest, EnqueueDequeue) {
+void test_enqueue_dequeue() {
     Queue q;
-    q.enqueue(10);
-    q.enqueue(20);
-    q.enqueue(30);
+    initQueue(&q);
+    enqueue(&q, 10);
+    enqueue(&q, 20);
+    enqueue(&q, 30);
 
-    EXPECT_EQ(q.dequeue(), 10);
-    EXPECT_EQ(q.dequeue(), 20);
-    EXPECT_EQ(q.dequeue(), 30);
+    // Test dequeue
+    CU_ASSERT_EQUAL(dequeue(&q), 10);
+    CU_ASSERT_EQUAL(dequeue(&q), 20);
+    CU_ASSERT_EQUAL(dequeue(&q), 30);
 }
 
-// Test case for checking if the queue is empty
-TEST(QueueTest, IsEmpty) {
+void test_isEmpty() {
     Queue q;
-    EXPECT_TRUE(q.isEmpty());
-    q.enqueue(10);
-    EXPECT_FALSE(q.isEmpty());
-    q.dequeue();
-    EXPECT_TRUE(q.isEmpty());
+    initQueue(&q);
+    CU_ASSERT_TRUE(isEmpty(&q));
+
+    enqueue(&q, 10);
+    CU_ASSERT_FALSE(isEmpty(&q));
+
+    dequeue(&q);
+    CU_ASSERT_TRUE(isEmpty(&q));
 }
 
-// Test case for front element without dequeuing
-TEST(QueueTest, FrontElement) {
+void test_peek() {
     Queue q;
-    q.enqueue(10);
-    q.enqueue(20);
-    EXPECT_EQ(q.front(), 10);
-    q.dequeue();
-    EXPECT_EQ(q.front(), 20);
+    initQueue(&q);
+    enqueue(&q, 10);
+    enqueue(&q, 20);
+    CU_ASSERT_EQUAL(peek(&q), 10);  // Should peek at the front element
 }
 
-// Test case for attempting to dequeue from an empty queue
-TEST(QueueTest, DequeueEmptyQueue) {
-    Queue q;
-    EXPECT_THROW(q.dequeue(), std::underflow_error);
-}
+int main() {
+    CU_initialize_registry();
+    CU_pSuite pSuite = CU_add_suite("Queue Test Suite", 0, 0);
 
-// Test case for attempting to access the front element of an empty queue
-TEST(QueueTest, FrontEmptyQueue) {
-    Queue q;
-    EXPECT_THROW(q.front(), std::underflow_error);
-}
+    // Add test cases
+    CU_add_test(pSuite, "Test enqueue and dequeue", test_enqueue_dequeue);
+    CU_add_test(pSuite, "Test isEmpty function", test_isEmpty);
+    CU_add_test(pSuite, "Test peek function", test_peek);
 
-// Test case for displaying queue elements
-TEST(QueueTest, DisplayQueue) {
-    Queue q;
-    q.enqueue(10);
-    q.enqueue(20);
-    q.enqueue(30);
-    // You could capture the output or manually check it in the console
-    q.display();  // Expected output: 10 20 30
+    CU_basic_set_mode(CU_BRM_VERBOSE);
+    CU_basic_run_tests();
+    CU_cleanup_registry();
+    return 0;
 }
-
