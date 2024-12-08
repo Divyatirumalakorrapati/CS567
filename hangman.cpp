@@ -82,6 +82,7 @@ bool checkDefeat(const std::string& attempts) {
     return attempts.find('*') == std::string::npos;
 }
 
+
 // Function to display Hangman diagram based on incorrect guesses
 void displayHangman(int incorrectGuesses) {
     switch (incorrectGuesses) {
